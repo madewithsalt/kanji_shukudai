@@ -23,32 +23,14 @@ function split(a, n) {
     return out;
 }
 
-function getUniCodeChar(kvgId) {
-    var id = kvgId.split('kvg:0')[1];
+function getHexCode(kvgId) {
+    var id = '&#x' + kvgId.split('kvg:kanji_')[1] + ';'
 
     return id;
 }
 
 function getKvgId (kvgId) {
-    return kvgId.split('kvg:')[1];
-}
-
-function getAttributes(attrs) {
-    var result = {};
-
-    _.each(attrs, function(val, key) {
-        var name;
-
-        if(key.indexOf('kvg:') === 0) {
-            name = key.split('kvg:')[1];                
-        } else {
-            name = key;                
-        }
-
-        result[name] = val.indexOf('kvg:') === 0 ? val.split('kvg:')[1] : val;
-    });
-
-    return result;
+    return kvgId.split('kvg:kanji_')[1];
 }
 
 console.log('Reading xml file ...');
@@ -70,21 +52,7 @@ fs.readFile('data/' + XMLFilename, 'utf8', function(err, data) {
         try {
             fs.mkdirSync(outputDestination);
         } catch(e) {
-            console.log('Output dir exists. Cleaning dir and re-writing files ...');
-            // Find files
-            glob(outputDestination + "/*",function(err, files){
-                 if (err) throw err;
-                 // files.forEach(function(item,index,array){
-                 //      console.log(item + " found");
-                 // });
-
-                 // Delete files
-                 files.forEach(function(item,index,array){
-                      fs.unlinkSync(item);
-                      console.log(item + 'deleted.');
-                 });
-            });
-
+            console.log('Output dir exists. Over-writing files ...');
         }
 
         // this will be the file called "key.json"
@@ -95,22 +63,20 @@ fs.readFile('data/' + XMLFilename, 'utf8', function(err, data) {
                 lastIndex = group.length - 1,
                 output = {};
 
-            key[fileName] = [
-                getUniCodeChar(group[0]['g'][0]['$'].id),
-                getUniCodeChar(group[lastIndex]['g'][0]['$'].id)
-            ];
+            key[fileName] = [];
 
             _.each(group, function(item) {
                 var svg = item['g'][0],
-                    id = getKvgId(svg['$'].id),
-                    uni = getUniCodeChar(svg['$'].id),
+                    id = getKvgId(item['$'].id),
                     result = {
-                        attrs: _.extend(getAttributes(svg['$']), { 
-                            uni: uni
+                        '$': _.extend(item['$'], { 
+                            hex: getHexCode(item['$'].id),
+                            id: getKvgId(item['$'].id
                         }),
-                        svg: _.omit(svg, '$')
+                        svg: svg
                     };
 
+                key[fileName].push(id);
                 output[id] = result;
             });
 

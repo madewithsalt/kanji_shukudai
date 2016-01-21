@@ -36,6 +36,7 @@ module.exports = function(grunt) {
             lib: {
                 src: [
                     '<%= config.lib %>/jquery/dist/jquery.js',
+                    '<%= config.lib %>/d3/d3.js',
                     '<%= config.lib %>/async/lib/async.js',
                     '<%= config.lib %>/bootstrap-sass/assets/javascripts/bootstrap.js',
                     '<%= config.lib %>/underscore/underscore.js',
@@ -44,7 +45,7 @@ module.exports = function(grunt) {
                     '<%= config.lib %>/swag/lib/swag.js',
                     '<%= config.lib %>/backbone.wreqr/lib/backbone.wreqr.js',
                     '<%= config.lib %>/backbone.marionette/lib/backbone.marionette.js',
-                    './assets/js/lib/**/*.js',
+                    '<%= config.src %>/js/lib/**/*.js',
                 ],
                 dest: '<%= config.dist %>/js/lib.js'
             },
@@ -78,7 +79,7 @@ module.exports = function(grunt) {
                 tasks: ['concat']
             },
             handlebars: {
-                files: ['<%= config.app %>/assets/js/templates/{,**/}*.hbs'],
+                files: ['<%= config.src %>/js/app/templates/{,**/}*.hbs'],
                 tasks: ['exec:handlebars']
             },
             css: {

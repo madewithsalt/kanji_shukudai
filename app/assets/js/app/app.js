@@ -39,6 +39,11 @@ window.App = (function(Backbone, Marionette) {
         var $title = $('#page-title'),
             titleContent = '漢字の宿題　ー　Kanji Homework Helper';
 
+
+        App.data = {
+            key: new App.Entities.DataKey()
+        };
+
         // MODALS
         App.vent.on('modal:open', function(options) {
             var modal = new App.Views.Modal(options);
@@ -60,20 +65,19 @@ window.App = (function(Backbone, Marionette) {
     App.on('start', function(options) {
         App.version = options.version;
 
-        // var tasks = _.map(this.collections, function(coll, name) {
-        //     return function(callback) {
-        //         coll.fetch({
-        //             success: function() {
-        //                 callback(null, coll);
-        //             },
-        //             error: function(xhr, status, err) {
-        //                 callback(coll.type + ' ' + err, coll);
-        //                 return console.error('Something blew up.', arguments);
-        //             }
-        //         })
-        //     }
-        // });
+        App.mainRegion.show(new App.Views.Loader());
 
+        App.data.key.fetch({
+            success: function() {
+                Backbone.history.start();
+            },
+
+            error: function(err) {
+                App.errorsRegion.show(new App.Views.Error({
+                    message: err
+                }));
+            }
+        })
 
         // async.parallel(tasks, function(err, results) {
         //     if (err) {
@@ -84,7 +88,7 @@ window.App = (function(Backbone, Marionette) {
 
             // App.errorsRegion.reset();
 
-            Backbone.history.start();
+            // Backbone.history.start();
         // });
     });
 

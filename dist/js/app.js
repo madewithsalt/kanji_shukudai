@@ -39,6 +39,11 @@ window.App = (function(Backbone, Marionette) {
         var $title = $('#page-title'),
             titleContent = '漢字の宿題　ー　Kanji Homework Helper';
 
+
+        App.data = {
+            key: new App.Entities.DataKey()
+        };
+
         // MODALS
         App.vent.on('modal:open', function(options) {
             var modal = new App.Views.Modal(options);
@@ -60,20 +65,19 @@ window.App = (function(Backbone, Marionette) {
     App.on('start', function(options) {
         App.version = options.version;
 
-        // var tasks = _.map(this.collections, function(coll, name) {
-        //     return function(callback) {
-        //         coll.fetch({
-        //             success: function() {
-        //                 callback(null, coll);
-        //             },
-        //             error: function(xhr, status, err) {
-        //                 callback(coll.type + ' ' + err, coll);
-        //                 return console.error('Something blew up.', arguments);
-        //             }
-        //         })
-        //     }
-        // });
+        App.mainRegion.show(new App.Views.Loader());
 
+        App.data.key.fetch({
+            success: function() {
+                Backbone.history.start();
+            },
+
+            error: function(err) {
+                App.errorsRegion.show(new App.Views.Error({
+                    message: err
+                }));
+            }
+        })
 
         // async.parallel(tasks, function(err, results) {
         //     if (err) {
@@ -84,7 +88,7 @@ window.App = (function(Backbone, Marionette) {
 
             // App.errorsRegion.reset();
 
-            Backbone.history.start();
+            // Backbone.history.start();
         // });
     });
 
@@ -134,6 +138,13 @@ App.module("Views", function(Views, App, Backbone, Marionette, $, _){
     });
 
 });
+App.module("Views", function(Views, App, Backbone, Marionette, $, _){
+
+	Views.Loader = Marionette.ItemView.extend({
+		template: 'loader'
+	});
+
+});
 App.module("Views", function(Views, App, Backbone, Marionette, $, _) {
 
     Views.Modal = Marionette.LayoutView.extend({
@@ -167,4 +178,159 @@ App.module("Views", function(Views, App, Backbone, Marionette, $, _) {
             }
         }
     });
+});
+App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
+
+    Home.BaseView = Marionette.LayoutView.extend({
+        template: 'home/home',
+        className: 'home',
+
+        events: {
+            'click .submit': 'processEntries'
+        },
+
+        ui: {
+            'input': '.input'
+        },
+
+        regions: {},
+
+        initialize: function() {
+            this.key = App.data.key;
+        },
+
+        processEntries: function(evt) {
+            var input = this.ui.input.val(),
+                hex, id;
+
+            if(_.isEmpty(input)) { return; }
+
+            hex = he.encode(input[0]);
+            id = hex.split('&#x')[1].split(';')[0].toLowerCase();
+
+            // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
+            // REASON - you can have as many 0's in front of a code and it will still decode properly.
+            if(id.length < 5) {
+                for(var i = 0; i < (5 - id.length); i++) {
+                    id = '0' + id;
+                }
+            }
+
+            console.log(this.key.locateHexCode(id));
+        }
+    });
+
+    App.on('before:start', function() {
+        App.commands.setHandler('show:home', function() {
+            App.mainRegion.show(new Home.BaseView());
+        });
+    });
+
+});
+App.module("MainNav", function(Nav, App, Backbone, Marionette, $, _){
+
+	Nav.BaseView = Marionette.LayoutView.extend({
+		template: 'main-nav/main-nav',
+		className: 'navbar navbar-default navbar-fixed-top',
+
+		regions: {
+			menu: '.menu-region'
+		},
+
+        events: {},
+
+        serializeData: function() {
+            return {
+                version: App.version
+            };
+        },
+
+		onBeforeShow: function() {
+            this.menu.show(new Nav.Menu());
+		}
+	});
+
+    Nav.Menu = Marionette.ItemView.extend({
+        template: 'main-nav/menu',
+
+        menuItems: [
+            {
+                name: 'index',
+                title: 'Home'
+            },
+            {
+                name: 'worksheet',
+                title: 'Kanji Worksheet'
+            },
+            {
+                name: 'about',
+                title: 'About'
+            }
+        ],
+
+        initialize: function() {
+            var self = this;
+
+            this.listenTo(App.vent, 'nav:update', function(activeItem) {
+                self.active = activeItem;
+                self.render();
+            });
+
+        },
+
+        serializeData: function() {
+            var self = this,
+                menu = _.map(this.menuItems, function(item) {
+
+                    if(self.active === item.name || item.name === 'index' && !self.active) {
+                        item.isActive = true;
+                    } else {
+                        item.isActive = false;
+                    }
+
+                    return item;
+                });
+
+            return {
+                menuItems: menu
+            }
+        }
+    })
+
+
+    App.on('start', function() {
+        App.navRegion.show(new Nav.BaseView({}));
+    });
+
+
+});
+App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
+
+    Entities.DataKey = Backbone.Model.extend({
+        url: '/data/key.json',
+
+        locateHexCode: function(code) {
+            var attrs = this.attributes,
+                result;
+
+            _.each(attrs, function(keys, fileName) {
+                var hasKey = _.indexOf(keys, code);
+
+                if(hasKey !== -1) {
+                    result = fileName;
+                }
+            });
+
+            return result;
+        },
+
+        retrieveFormula: function(code) {
+            var targetFile = this.locateHexCode(code);
+
+            if(!targetFile) { return; }
+
+            
+        }
+    });
+
 });
