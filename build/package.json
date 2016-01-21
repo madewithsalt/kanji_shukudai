@@ -1,0 +1,16 @@
+{
+  "name": "kanjishuuku",
+  "version": "1.0.0",
+  "description": "compiles kanji vg source data into webapp-friendly formatting.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kristi Centinaro",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^6.0.4",
+    "underscore": "^1.8.3",
+    "xml2js": "^0.4.16"
+  }
+}

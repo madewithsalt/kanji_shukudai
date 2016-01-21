@@ -1,0 +1,23 @@
+{
+  "title": "kanji shukudai",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-connect": "^0.11.2",
+    "grunt-contrib-copy": "^0.8.1",
+    "grunt-contrib-handlebars": "^0.10.2",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-qunit": "~0.5.2",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-exec": "^0.4.6",
+    "mocha": "^2.3.2",
+    "underscore": "^1.8.3"
+  }
+}
