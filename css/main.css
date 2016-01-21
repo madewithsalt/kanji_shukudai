@@ -7823,4 +7823,14 @@ button.close {
 .fa-fonticons:before {
   content: ""; }
 
+body {
+  padding: 60px 0; }
+
+.loading-spinner {
+  text-align: center;
+  padding: 24px;
+  margin: 12px auto;
+  font-size: 24px;
+  color: #ccc; }
+
 /*# sourceMappingURL=main.css.map */
