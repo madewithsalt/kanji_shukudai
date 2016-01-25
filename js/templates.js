@@ -24,7 +24,14 @@ templates['modal.hbs'] = template({"1":function(container,depth0,helpers,partial
     + "        </div>\n        <div class=\"modal-body\"></div>\n    </div>\n</div>";
 },"useData":true});
 templates['home/home.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div class=\"container\">\n    <div class=\"col-md-12\">\n    	<form>\n	    	<input type=\"text\" class=\"input\" value=\"\" />\n    		<a class=\"btn btn-primary submit\">Go!</a>\n    		<p class=\"small\">Enter only one character at a time.</p>\n    	</form>\n    </div>\n</div>";
+    return "<div class=\"container home-container\">\n    <div class=\"col-md-4\">\n    	<h3>Add Kanji</h3>\n    	<form class=\"add-character\">\n	    	<textarea class=\"input form-control buffer-bottom\" rows=\"3\">何めみぬ食べ</textarea>\n	    	<p class=\"small\">Characters that do not have a stroke-order are ignored.</p>\n    		<a class=\"btn btn-default submit\">Add</a>\n    	</form>\n    </div>\n    <div class=\"col-md-8\">\n    	<h3 class=\"queue-title\">Queue</h3>\n    	<div class=\"character-queue\"></div>\n    	<div class=\"row\">\n			<div class=\"col-md-12\">\n    			<a class=\"process-btn btn btn-primary btn-lg hidden buffer-top align-right\">Create</a>			\n			</div>    		\n    	</div>\n    </div>\n</div>";
+},"useData":true});
+templates['home/queue-item.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper;
+
+  return "<a class=\"close\">&times;</a>\n<span class=\"character\">"
+    + ((stack1 = ((helper = (helper = helpers.hex || (depth0 != null ? depth0.hex : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"hex","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</span>\n";
 },"useData":true});
 templates['main-nav/main-nav.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
@@ -62,6 +69,13 @@ templates['main-nav/menu.hbs'] = template({"1":function(container,depth0,helpers
     + "    </ul>\n";
 },"useData":true});
 templates['worksheet/base.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "";
+    return "<div class=\"formula-list\"></div>";
+},"useData":true});
+templates['worksheet/template.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper;
+
+  return "<div class=\"target\">"
+    + ((stack1 = ((helper = (helper = helpers.hex || (depth0 != null ? depth0.hex : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"hex","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</div>\n<svg class=\"stroke-order\"></svg>";
 },"useData":true});
 })();
