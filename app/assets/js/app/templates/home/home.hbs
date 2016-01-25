@@ -1,9 +1,19 @@
-<div class="container">
-    <div class="col-md-12">
-    	<form>
-	    	<input type="text" class="input" value="" />
-    		<a class="btn btn-primary submit">Go!</a>
-    		<p class="small">Enter only one character at a time.</p>
+<div class="container home-container">
+    <div class="col-md-4">
+    	<h3>Add Kanji</h3>
+    	<form class="add-character">
+	    	<textarea class="input form-control buffer-bottom" rows="3">何めみぬ食べ</textarea>
+	    	<p class="small">Characters that do not have a stroke-order are ignored.</p>
+    		<a class="btn btn-default submit">Add</a>
     	</form>
+    </div>
+    <div class="col-md-8">
+    	<h3 class="queue-title">Queue</h3>
+    	<div class="character-queue"></div>
+    	<div class="row">
+			<div class="col-md-12">
+    			<a class="process-btn btn btn-primary btn-lg hidden buffer-top align-right">Create</a>			
+			</div>    		
+    	</div>
     </div>
 </div>

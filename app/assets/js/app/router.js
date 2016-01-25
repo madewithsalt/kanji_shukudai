@@ -1,9 +1,8 @@
 (function(App, Marionette, Backbone) {
     App.Router = Marionette.AppRouter.extend({
         routes: {
-            '': 'index',
-            'index': 'index',
-            'watch-list': 'watchList',
+            '(index)': 'index',
+            'worksheet': 'workSheet',
             'about': 'about'
         },
 
@@ -12,9 +11,9 @@
             App.vent.trigger('nav:update', 'index');
         },
 
-        watchList: function() {
-            App.commands.execute('show:watchList');
-            App.vent.trigger('nav:update', 'watch-list');
+        workSheet: function() {
+            App.commands.execute('show:worksheet');
+            App.vent.trigger('nav:update', 'worksheet');
         },
 
         about: function() {

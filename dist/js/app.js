@@ -100,9 +100,8 @@ window.App = (function(Backbone, Marionette) {
 (function(App, Marionette, Backbone) {
     App.Router = Marionette.AppRouter.extend({
         routes: {
-            '': 'index',
-            'index': 'index',
-            'watch-list': 'watchList',
+            '(index)': 'index',
+            'worksheet': 'workSheet',
             'about': 'about'
         },
 
@@ -111,9 +110,9 @@ window.App = (function(Backbone, Marionette) {
             App.vent.trigger('nav:update', 'index');
         },
 
-        watchList: function() {
-            App.commands.execute('show:watchList');
-            App.vent.trigger('nav:update', 'watch-list');
+        workSheet: function() {
+            App.commands.execute('show:worksheet');
+            App.vent.trigger('nav:update', 'worksheet');
         },
 
         about: function() {
@@ -181,42 +180,112 @@ App.module("Views", function(Views, App, Backbone, Marionette, $, _) {
 });
 App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
+    Home.QueueItem = Marionette.ItemView.extend({
+        template: 'home/queue-item',
+        className: 'alert alert-info queue-item',
+
+        triggers: {
+            'click .close': 'item:remove'
+        }
+    });
+
+    Home.QueueList = Marionette.CollectionView.extend({
+        childView: Home.QueueItem,
+
+        childEvents: {
+            'item:remove': 'removeItem'
+        },
+
+        removeItem: function(view) {
+            this.collection.remove(view.model);
+        }
+    });
+
     Home.BaseView = Marionette.LayoutView.extend({
         template: 'home/home',
         className: 'home',
 
         events: {
-            'click .submit': 'processEntries'
+            'click .submit': 'addEntry',
+            'click .process-btn': 'processEntries'
         },
 
         ui: {
-            'input': '.input'
+            'input': '.input',
+            'processBtn': '.process-btn'
         },
 
-        regions: {},
+        regions: {
+            'queue': '.character-queue'
+        },
 
         initialize: function() {
+            var self = this;
+
             this.key = App.data.key;
+            this.itemQueue = App.data.itemQueue || new Backbone.Collection();
+
+            this.listenTo(this.itemQueue, 'add remove', function() {
+                self.checkReady();
+            });
+
         },
 
-        processEntries: function(evt) {
-            var input = this.ui.input.val(),
-                hex, id;
+        onBeforeShow: function() {
+            this.queue.show(new Home.QueueList({
+                collection: this.itemQueue
+            }));
+        },
+
+        checkReady: function() {
+            if(this.itemQueue.length) {
+                this.ui.processBtn.removeClass('hidden');
+            } else {
+                this.ui.processBtn.addClass('hidden');
+            }
+        },
+
+        addEntry: function(evt) {
+            var self = this,
+                input = this.ui.input.val();
 
             if(_.isEmpty(input)) { return; }
 
-            hex = he.encode(input[0]);
-            id = hex.split('&#x')[1].split(';')[0].toLowerCase();
+            _.each(input, function(character) {
+                var target = character,
+                    hex = he.encode(character),
+                    id;
 
-            // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
-            // REASON - you can have as many 0's in front of a code and it will still decode properly.
-            if(id.length < 5) {
-                for(var i = 0; i < (5 - id.length); i++) {
-                    id = '0' + id;
+                if(hex.indexOf('&#x') === 0) {
+                    id = hex.split('&#x')[1].split(';')[0].toLowerCase();
+
+                    // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
+                    // REASON - you can have as many 0's in front of a code and it will still decode properly.
+                    if(id.length < 5) {
+                        for(var i = 0; i < (5 - id.length); i++) {
+                            id = '0' + id;
+                        }
+                    }
+
+                    if(self.key.locateEntity(id)) {
+                        self.itemQueue.add({
+                            id: id,
+                            target: target,
+                            hex: hex
+                        });                        
+                    }
+
                 }
-            }
+            });
 
-            console.log(this.key.locateHexCode(id));
+            this.ui.input.val('');
+        },
+
+        processEntries: function() {
+            if(!this.itemQueue.length) { return; }
+
+            App.data.itemQueue = this.itemQueue;
+            App.router.navigate('worksheet', { trigger: true });
         }
     });
 
@@ -304,17 +373,78 @@ App.module("MainNav", function(Nav, App, Backbone, Marionette, $, _){
 
 
 });
+App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
+
+
+    Worksheet.TemplateView = Marionette.ItemView.extend({
+        template: 'worksheet/template',
+
+        initalize: function() {
+
+        },
+
+        ui: {
+            'strokeOrder': 'svg.stroke-order'
+        },
+
+        renderStrokeOrderSVG: function() {
+            // svg translation
+            // if groups, render groups
+            // iterate through the svg formula, 
+            // and render any stroke <= current iteration
+            // once a stroke === iteration is not found, complete.
+
+        }
+    });
+
+    Worksheet.TemplateList = Marionette.CollectionView.extend({
+        childView: Worksheet.TemplateView
+    });
+
+    Worksheet.BaseView = Marionette.LayoutView.extend({
+        template: 'worksheet/base',
+
+        regions: {
+            'list': '.formula-list'
+        },
+
+        onBeforeShow: function() {
+            this.list.show(new Worksheet.TemplateList({
+                collection: this.collection
+            }));
+        }
+    });
+
+    App.on('before:start', function() {
+        App.commands.setHandler('show:worksheet', function() {
+
+            App.mainRegion.show(new App.Views.Loader());
+
+            App.data.key.getFormulae(App.data.itemQueue, function(err, formulaList) {
+                if(err) {
+                    App.router.navigate('index', { trigger: true });
+                }
+
+                App.mainRegion.show(new Worksheet.BaseView({
+                    collection: formulaList
+                }));
+            });
+
+        });
+    });
+});
 App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
 
     Entities.DataKey = Backbone.Model.extend({
         url: '/data/key.json',
 
-        locateHexCode: function(code) {
+        locateEntity: function(id) {
+            id = this.getIdFromHex(id);
             var attrs = this.attributes,
                 result;
 
             _.each(attrs, function(keys, fileName) {
-                var hasKey = _.indexOf(keys, code);
+                var hasKey = _.indexOf(keys, id);
 
                 if(hasKey !== -1) {
                     result = fileName;
@@ -324,13 +454,92 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
             return result;
         },
 
-        retrieveFormula: function(code) {
-            var targetFile = this.locateHexCode(code);
+        getIdFromHex: function(code) {
+            var id = code;
+                if(code.indexOf('&#x') === 0) {
+                    id = code.split('&#x')[1].split(';')[0].toLowerCase();
 
-            if(!targetFile) { return; }
+                    // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
+                    // REASON - you can have as many 0's in front of a code and it will still decode properly.
+                    if(code.length < 5) {
+                        for(var i = 0; i < (5 - id.length); i++) {
+                            id = '0' + id;
+                        }
+                    }
+                }
 
-            
+            return id;
+        },
+
+        getHexFromId: function(id) {
+            return '&#x' + id + ';';
+        },
+
+        getFormulae: function(entityCollection, callback) {
+            callback = callback || function() {};
+
+            if(!entityCollection || !entityCollection.length) { return callback(true); }
+
+            var self = this,
+                filesRequired = [];
+
+            entityCollection.each(function(model) {
+                var id = model.get('id'),
+                    targetFile = self.locateEntity(id);
+
+                if(targetFile) {
+                    filesRequired.push(_.extend({ 
+                        file: targetFile 
+                    }, model.toJSON()));
+                }
+            });
+
+            filesRequired = _.groupBy(filesRequired, 'file');
+            var tasks = [];
+            _.each(filesRequired, function(list, fileName) {
+                var fileModel = new Entities.FormulaSet({}, { file: fileName, targets: list });
+                tasks.push(function(cb) {
+                    fileModel.fetch({
+                        success: function() {
+                            cb(null, fileModel);
+                        }, 
+                        error: function() {
+                            cb('failed to get ' + fileName);
+                        }
+                    })
+                });
+            });
+
+            async.parallel(tasks, function(err, results) {
+                var formulae = [];
+
+                _.each(results, function(model) {
+                    formulae.push(_.toArray(model.toJSON()));
+                });
+
+                callback(null, new Backbone.Collection(_.flatten(formulae)));
+            });
         }
     });
+
+    Entities.FormulaSet = Backbone.Model.extend({
+        initialize: function(attrs, opts) {
+            if(!opts.file && !opts.targets) { return console.error('no filename or target entities provided.'); }
+
+            this.url = '/data/' + opts.file + '.json';
+            this.targets = opts.targets;
+        },
+
+        parse: function(data) {
+            var self = this,
+                attrs = {};
+
+            _.each(this.targets, function(target) {
+                attrs[target.id] = _.extend({}, target, data[target.id]);
+            });
+
+            return attrs;
+        }
+    })
 
 });
