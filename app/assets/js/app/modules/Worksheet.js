@@ -1,26 +1,61 @@
 App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
 
-
-    Worksheet.TemplateView = Marionette.ItemView.extend({
+    Worksheet.TemplateView = Marionette.LayoutView.extend({
         template: 'worksheet/template',
 
-        initalize: function() {
+        initialize: function() {
+            this.strokeCount = this.collectStrokeCount();
+        },
 
+        regions: {
+            'strokes': '.stroke-order'
         },
 
         ui: {
-            'strokeOrder': 'svg.stroke-order'
+            'strokeOrder': '.stroke-order'
         },
 
-        renderStrokeOrderSVG: function() {
-            // svg translation
-            // if groups, render groups
-            // iterate through the svg formula, 
-            // and render any stroke <= current iteration
-            // once a stroke === iteration is not found, complete.
+        onBeforeShow: function() {
+            var charsPerRow = 6;
 
+            this.strokes.show(new App.Views.Charts.StrokeOrderSVG({
+                model: this.model,
+                strokes: this.strokeCount,
+                width: charsPerRow <= this.strokeCount ? charsPerRow * 100 : this.strokeCount * 100,
+                height: this.strokeCount > charsPerRow ? (Math.ceil(this.strokeCount / charsPerRow) * 100) : 100
+            }));
+        },
+
+        collectStrokeCount: function() {
+            var data = this.model.toJSON(),
+                id = data.id,
+                svg = data.svg,
+                count = 0;
+
+            function traverseChildren (arr) {
+                _.each(arr, function(obj) {
+                    if(obj['path']) {
+                        count += obj['path'].length;
+                    }
+
+                    if(obj['g']) {
+                        traverseChildren(obj['g']);
+                    }
+                });
+            }
+
+            if(svg['g']) {
+                traverseChildren(svg['g']);
+            }
+
+            if(svg['path']) {
+                count += svg.path.length;
+            }
+
+            return count;
         }
     });
+
 
     Worksheet.TemplateList = Marionette.CollectionView.extend({
         childView: Worksheet.TemplateView
@@ -47,7 +82,7 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
 
             App.data.key.getFormulae(App.data.itemQueue, function(err, formulaList) {
                 if(err) {
-                    App.router.navigate('index', { trigger: true });
+                    return App.router.navigate('index', { trigger: true });
                 }
 
                 App.mainRegion.show(new Worksheet.BaseView({

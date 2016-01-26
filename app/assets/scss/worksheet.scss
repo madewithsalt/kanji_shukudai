@@ -1,0 +1,63 @@
+
+
+.chart {
+    svg {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 3;
+    }
+
+    path.current {
+        stroke: #000;
+    }
+
+    .marker {
+        fill: rgba(218, 11, 11, 0.6);
+        stroke: none;
+    }
+}
+
+.formula-list {
+    .formula-list-item {
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 8px;
+    }
+
+    .target, .stroke-order {
+        display: inline-block;
+        margin-right: 12px;
+        margin-bottom: 20px;
+        vertical-align: middle;
+    }
+
+    .target {
+        width: 200px;
+        height: 200px;
+        text-align: center;
+        font-size: 125px;
+        line-height: 200px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        font-family: "HiraMinPro-W3", "Hiragino Mincho Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "游明朝", YuMincho, "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", "MS Mincho", serif;
+    }
+
+    .stroke-order {
+
+    }
+
+    .grid {
+        stroke: #ccc;
+        stroke-width: 2px;
+
+        &.border-inner, &.guide {
+            stroke-width: 1px;
+        }
+
+        &.dotted {
+            stroke-width: 1px;
+            stroke-dasharray: 5, 5;
+        }
+    }
+
+
+}

@@ -27,15 +27,15 @@ App.module("MainNav", function(Nav, App, Backbone, Marionette, $, _){
         menuItems: [
             {
                 name: 'index',
-                title: 'Home'
+                title: 'ホーム'
             },
             {
                 name: 'worksheet',
-                title: 'Kanji Worksheet'
+                title: 'ワークシート'
             },
             {
                 name: 'about',
-                title: 'About'
+                title: 'アボウート'
             }
         ],
 

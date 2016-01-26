@@ -24,6 +24,7 @@
     "font-awesome": "fontawesome#~4.4.0",
     "handlebars": "~4.0.2",
     "swag": "~0.7.0",
-    "d3": "~3.5.13"
+    "d3": "~3.5.13",
+    "Snap.svg": "~0.4.1"
   }
 }

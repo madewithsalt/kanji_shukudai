@@ -98,7 +98,7 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
                 }
             });
 
-            this.ui.input.val('');
+            this.ui.input.empty();
         },
 
         processEntries: function() {
