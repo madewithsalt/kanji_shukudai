@@ -7823,19 +7823,6 @@ button.close {
 .fa-fonticons:before {
   content: ""; }
 
-.home-container .queue-item {
-  float: left;
-  margin: 0 12px 12px 0;
-  position: relative; }
-  .home-container .queue-item .close {
-    color: #031D35;
-    position: absolute;
-    top: -4px;
-    right: 4px;
-    cursor: pointer; }
-  .home-container .queue-item .character {
-    font-size: 22px; }
-
 body {
   padding: 60px 0; }
 
@@ -7861,5 +7848,54 @@ body {
 
 .align-center {
   text-align: center; }
+
+.home-container .queue-item {
+  float: left;
+  margin: 0 12px 12px 0;
+  position: relative; }
+  .home-container .queue-item .close {
+    color: #031D35;
+    position: absolute;
+    top: -4px;
+    right: 4px;
+    cursor: pointer; }
+  .home-container .queue-item .character {
+    font-size: 22px; }
+
+.chart svg {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 3; }
+.chart path.current {
+  stroke: #000; }
+.chart .marker {
+  fill: rgba(218, 11, 11, 0.6);
+  stroke: none; }
+
+.formula-list .formula-list-item {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px; }
+.formula-list .target, .formula-list .stroke-order {
+  display: inline-block;
+  margin-right: 12px;
+  margin-bottom: 20px;
+  vertical-align: middle; }
+.formula-list .target {
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  font-size: 125px;
+  line-height: 200px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-family: "HiraMinPro-W3", "Hiragino Mincho Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "游明朝", YuMincho, "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", "MS Mincho", serif; }
+.formula-list .grid {
+  stroke: #ccc;
+  stroke-width: 2px; }
+  .formula-list .grid.border-inner, .formula-list .grid.guide {
+    stroke-width: 1px; }
+  .formula-list .grid.dotted {
+    stroke-width: 1px;
+    stroke-dasharray: 5, 5; }
 
 /*# sourceMappingURL=main.css.map */
