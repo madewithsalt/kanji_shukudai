@@ -27,12 +27,13 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         events: {
             'click .submit': 'addEntry',
-            'click .process-btn': 'processEntries'
+            'click .process-btn': 'processEntries',
+            'click .clear-btn': 'clearEntries'
         },
 
         ui: {
-            'input': '.input',
-            'processBtn': '.process-btn'
+            'input': 'textarea',
+            'btns': '.actions .btn'
         },
 
         regions: {
@@ -45,7 +46,7 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             this.key = App.data.key;
             this.itemQueue = App.data.itemQueue || new Backbone.Collection();
 
-            this.listenTo(this.itemQueue, 'add remove', function() {
+            this.listenTo(this.itemQueue, 'add remove reset', function() {
                 self.checkReady();
             });
 
@@ -55,13 +56,15 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             this.queue.show(new Home.QueueList({
                 collection: this.itemQueue
             }));
+
+            this.checkReady();
         },
 
         checkReady: function() {
             if(this.itemQueue.length) {
-                this.ui.processBtn.removeClass('hidden');
+                this.ui.btns.removeClass('hidden');
             } else {
-                this.ui.processBtn.addClass('hidden');
+                this.ui.btns.addClass('hidden');
             }
         },
 
@@ -106,6 +109,10 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
             App.data.itemQueue = this.itemQueue;
             App.router.navigate('worksheet', { trigger: true });
+        },
+
+        clearEntries: function() {
+            this.itemQueue.reset();
         }
     });
 
