@@ -648,7 +648,7 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
 App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
 
     Entities.DataKey = Backbone.Model.extend({
-        url: '/data/key.json',
+        url: 'data/key.json',
 
         locateEntity: function(id) {
             id = this.getIdFromHex(id);
@@ -738,7 +738,7 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
         initialize: function(attrs, opts) {
             if(!opts.file && !opts.targets) { return console.error('no filename or target entities provided.'); }
 
-            this.url = '/data/' + opts.file + '.json';
+            this.url = 'data/' + opts.file + '.json';
             this.targets = opts.targets;
         },
 
