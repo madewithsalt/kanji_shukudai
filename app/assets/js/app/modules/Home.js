@@ -90,11 +90,13 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             this.ui.input.empty();
         },
 
-        addCharacter: function(character) {
+        addCharacter: function(character, data) {
             var self = this,
                 target = character,
                 hex = he.encode(character),
                 id;
+
+            data = data || {};
 
             if(hex.indexOf('&#x') === 0) {
                 id = hex.split('&#x')[1].split(';')[0].toLowerCase();
@@ -108,11 +110,11 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
                 }
 
                 if(self.key.locateEntity(id)) {
-                    self.itemQueue.add({
+                    self.itemQueue.add(_.extend({
                         id: id,
                         target: target,
                         hex: hex
-                    });                        
+                    }, data));                       
                 }
 
             }
@@ -153,7 +155,7 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
                         kanji = _.where(info, { type: 'kanji' });
 
                     _.each(kanji, function(val, key) {
-                        self.addCharacter(val.character);
+                        self.addCharacter(val.character, val);
                     });
 
                     $btn.removeAttr('disabled').html(btnText);

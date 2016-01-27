@@ -23,7 +23,7 @@
         margin-bottom: 8px;
     }
 
-    .target, .stroke-order {
+    .target, .kanji-details-container {
         display: inline-block;
         margin-right: 12px;
         margin-bottom: 20px;
@@ -41,8 +41,15 @@
         font-family: "HiraMinPro-W3", "Hiragino Mincho Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "游明朝", YuMincho, "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", "MS Mincho", serif;
     }
 
-    .stroke-order {
+    .kanji-info {
+        .well {
+            display: inline-block;
+            margin-right: 8px;
+        }
 
+        .readings {
+            font-size: 22px;
+        }
     }
 
     .grid {

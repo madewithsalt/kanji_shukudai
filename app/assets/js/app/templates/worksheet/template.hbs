@@ -1,4 +1,16 @@
 <div class="col-md-12 formula-list-item">
 	<div class="target">{{{hex}}}</div>
-	<div class="stroke-order"></div>
+	<div class="kanji-details-container">
+		{{#if meaning}}
+			<div class="kanji-info">
+				<div class="well well-sm meaning">{{ meaning }}</div>
+				<div class="well well-sm readings">
+					<span>{{ onyomi }}</span>
+					<span>{{ kunyomi }}</span>
+					<span>{{ nanori }}</span>
+				</div>
+			</div>
+		{{/if}}
+		<div class="stroke-order"></div>
+	</div>
 </div>

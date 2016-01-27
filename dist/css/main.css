@@ -7887,7 +7887,7 @@ body {
 .formula-list .formula-list-item {
   border-bottom: 1px solid #ccc;
   margin-bottom: 8px; }
-.formula-list .target, .formula-list .stroke-order {
+.formula-list .target, .formula-list .kanji-details-container {
   display: inline-block;
   margin-right: 12px;
   margin-bottom: 20px;
@@ -7901,6 +7901,11 @@ body {
   border: 2px solid #ccc;
   border-radius: 6px;
   font-family: "HiraMinPro-W3", "Hiragino Mincho Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "游明朝", YuMincho, "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", "MS Mincho", serif; }
+.formula-list .kanji-info .well {
+  display: inline-block;
+  margin-right: 8px; }
+.formula-list .kanji-info .readings {
+  font-size: 22px; }
 .formula-list .grid {
   stroke: #ccc;
   stroke-width: 2px; }
