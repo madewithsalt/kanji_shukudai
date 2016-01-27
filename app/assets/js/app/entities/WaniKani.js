@@ -19,7 +19,7 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
 				},
 				error: function() {
 					if(options.error) {
-						options.error();
+						options.error(arguments);
 					}
 				}
 			})
