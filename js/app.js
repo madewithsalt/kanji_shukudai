@@ -385,7 +385,8 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
         events: {
             'click .submit': 'addEntry',
             'click .process-btn': 'processEntries',
-            'click .clear-btn': 'clearEntries'
+            'click .clear-btn': 'clearEntries',
+            'click .get-wanikani': 'processWaniKani'
         },
 
         ui: {
@@ -395,6 +396,14 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         regions: {
             'queue': '.character-queue'
+        },
+
+        serializeData: function() {
+            var cookies = Cookies.get();
+
+            return {
+                wk_key: cookies['wk_key']
+            }
         },
 
         initialize: function() {
@@ -432,33 +441,38 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             if(_.isEmpty(input)) { return; }
 
             _.each(input, function(character) {
-                var target = character,
-                    hex = he.encode(character),
-                    id;
-
-                if(hex.indexOf('&#x') === 0) {
-                    id = hex.split('&#x')[1].split(';')[0].toLowerCase();
-
-                    // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
-                    // REASON - you can have as many 0's in front of a code and it will still decode properly.
-                    if(id.length < 5) {
-                        for(var i = 0; i < (5 - id.length); i++) {
-                            id = '0' + id;
-                        }
-                    }
-
-                    if(self.key.locateEntity(id)) {
-                        self.itemQueue.add({
-                            id: id,
-                            target: target,
-                            hex: hex
-                        });                        
-                    }
-
-                }
+                self.addCharacter(character);
             });
 
             this.ui.input.empty();
+        },
+
+        addCharacter: function(character) {
+            var self = this,
+                target = character,
+                hex = he.encode(character),
+                id;
+
+            if(hex.indexOf('&#x') === 0) {
+                id = hex.split('&#x')[1].split(';')[0].toLowerCase();
+
+                // THEORY - id's are always 5 digits. add 0's to the front if the id has less.
+                // REASON - you can have as many 0's in front of a code and it will still decode properly.
+                if(id.length < 5) {
+                    for(var i = 0; i < (5 - id.length); i++) {
+                        id = '0' + id;
+                    }
+                }
+
+                if(self.key.locateEntity(id)) {
+                    self.itemQueue.add({
+                        id: id,
+                        target: target,
+                        hex: hex
+                    });                        
+                }
+
+            }
         },
 
         processEntries: function() {
@@ -470,6 +484,38 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         clearEntries: function() {
             this.itemQueue.reset();
+        },
+
+        processWaniKani: function(evt) {
+            var self = this,
+                wkKey = this.$('input[name="api"]').val(),
+                percent = this.$('input[name="crit-percent"]').val(),
+                $btn = $(evt.currentTarget),
+                btnText = $btn.text();
+
+            if(_.isEmpty(wkKey)) { return; }
+
+            Cookies.set('wk_key', wkKey);
+
+            $btn.attr('disabled', true).html('<i class="fa fa-spin fa-cog" />');
+
+            this.waniKani = new App.Entities.WaniKani({}, {
+                api_key: wkKey,
+                percent: percent || '95'
+            });
+
+            this.waniKani.fetch({
+                success: function(model) {
+                    var info = model.get('requested_information'),
+                        kanji = _.where(info, { type: 'kanji' });
+
+                    _.each(kanji, function(val, key) {
+                        self.addCharacter(val.character);
+                    });
+
+                    $btn.removeAttr('disabled').html(btnText);
+                }
+            })
         }
     });
 
@@ -761,4 +807,32 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
         }
     })
 
+});
+App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
+
+	Entities.WaniKani = Backbone.Model.extend({
+		initialize: function(attrs, opts) {
+			this.url = 'http://www.wanikani.com/api/user/' + opts.api_key + '/critical-items/' + opts.percent;
+		},
+
+		fetch: function(options) {
+			var self = this;
+
+			$.ajax({
+				url: this.url,
+				dataType: 'jsonp',
+				success: function(data) {
+					self.set(data);
+					if(options.success) {
+						options.success(self);
+					}
+				},
+				error: function() {
+					if(options.error) {
+						options.error();
+					}
+				}
+			})
+		}
+	});
 });
