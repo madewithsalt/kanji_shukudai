@@ -78,11 +78,25 @@ templates['main-nav/menu.hbs'] = template({"1":function(container,depth0,helpers
 templates['worksheet/base.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"formula-list\"></div>";
 },"useData":true});
-templates['worksheet/template.hbs'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    var stack1, helper;
+templates['worksheet/template.hbs'] = template({"1":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "			<div class=\"kanji-info\">\n				<div class=\"well well-sm meaning\">"
+    + alias4(((helper = (helper = helpers.meaning || (depth0 != null ? depth0.meaning : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"meaning","hash":{},"data":data}) : helper)))
+    + "</div>\n				<div class=\"well well-sm readings\">\n					<span>"
+    + alias4(((helper = (helper = helpers.onyomi || (depth0 != null ? depth0.onyomi : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"onyomi","hash":{},"data":data}) : helper)))
+    + "</span>\n					<span>"
+    + alias4(((helper = (helper = helpers.kunyomi || (depth0 != null ? depth0.kunyomi : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"kunyomi","hash":{},"data":data}) : helper)))
+    + "</span>\n					<span>"
+    + alias4(((helper = (helper = helpers.nanori || (depth0 != null ? depth0.nanori : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"nanori","hash":{},"data":data}) : helper)))
+    + "</span>\n				</div>\n			</div>\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : {};
 
   return "<div class=\"col-md-12 formula-list-item\">\n	<div class=\"target\">"
-    + ((stack1 = ((helper = (helper = helpers.hex || (depth0 != null ? depth0.hex : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"hex","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n	<div class=\"stroke-order\"></div>\n</div>";
+    + ((stack1 = ((helper = (helper = helpers.hex || (depth0 != null ? depth0.hex : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"hex","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</div>\n	<div class=\"kanji-details-container\">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.meaning : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "		<div class=\"stroke-order\"></div>\n	</div>\n</div>";
 },"useData":true});
 })();
