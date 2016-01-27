@@ -1,20 +1,68 @@
 <div class="container home-container">
     <div class="col-md-4">
-    	<h3>Add Kanji</h3>
-    	<form class="add-character">
-	    	<textarea class="input form-control buffer-bottom" rows="3"></textarea>
-	    	<p class="small">Characters that do not have a stroke-order are ignored.</p>
-    		<a class="btn btn-default submit">Add</a>
-    	</form>
+        <h3>Add Kanji</h3>
+        <form class="add-character">
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                      <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="collapse-text">Manual Entry</span>
+                        </a>
+                      </h4>
+                    </div>
+                    <div class="panel-collapse collapse in" id="collapseOne">
+                        <div class="panel-body">
+                            <textarea class="input form-control buffer-bottom" rows="3"></textarea>
+                            <p class="small">Characters that do not have a stroke-order are ignored.</p>
+                        </div>
+                    </div>
+                </div>
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <span class="wanikani-icon"><img src="img/wanikani.png" /></span>
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                        <span class="collapse-text">WaniKani API</span>
+                    </a>
+                  </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                    <div class="control-group">
+                        <label class="control-label">API Key:</label>
+                        <input type="text" class="form-control wanikani-api" name="api" value="{{ wk_key }}" />
+                    </div>
+                    <div class="control-group row buffer-top form-horizontal">
+                        <div class="col-md-12">
+                            <label class="control-label">Critical Items Threshold</label>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="crit-percent" value="95" />                        
+                                <div class="input-group-addon">%</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <p class="small">At what percentage did you answer correctly.</p>                        
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-default get-wanikani">Go</button>
+                  </div>
+                </div>
+              </div>
+          </div>
+            <a class="btn btn-default submit">Add</a>
+        </form>
     </div>
     <div class="col-md-8">
-    	<h3 class="queue-title">Queue</h3>
-    	<div class="character-queue"></div>
-    	<div class="row">
-			<div class="col-md-12 actions">
-    			<a class="process-btn btn btn-primary btn-lg hidden buffer-top align-right">Create</a>			
-                <a class="clear-btn btn btn-default btn-lg hidden buffer-top align-right">Clear</a>          
-			</div>    		
-    	</div>
+        <h3 class="queue-title">Queue</h3>
+        <div class="row">
+            <div class="col-md-12 actions align-right buffer-bottom">
+                <a class="process-btn btn btn-primary btn-lg hidden buffer-top">Create</a>          
+                <a class="clear-btn btn btn-default btn-lg hidden buffer-top">Clear</a>          
+            </div>          
+        </div>
+        <div class="character-queue"></div>
     </div>
 </div>

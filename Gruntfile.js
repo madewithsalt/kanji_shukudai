@@ -39,6 +39,7 @@ module.exports = function(grunt) {
                     '<%= config.lib %>/d3/d3.js',
                     '<%= config.lib %>/async/lib/async.js',
                     '<%= config.lib %>/Snap.svg/dist/snap.svg.js',            
+                    '<%= config.lib %>/js-cookie/src/js.cookie.js',            
                     '<%= config.lib %>/bootstrap-sass/assets/javascripts/bootstrap.js',
                     '<%= config.lib %>/underscore/underscore.js',
                     '<%= config.lib %>/backbone/backbone.js',

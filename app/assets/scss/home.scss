@@ -21,4 +21,24 @@
 			font-size: 22px;
 		}
 	}
+
+	.wanikani-icon, .collapse-text {
+		display: inline-block;
+		vertical-align: middle;
+		line-height: 25px;
+	}
+
+	.wanikani-icon {
+		overflow: hidden;
+		width: 25px;
+		height: 25px;
+		margin-right: 12px;
+		background-color: #f0a;
+
+		img {
+			width: 100%;
+		}
+	}
 }
+
+

@@ -7861,6 +7861,18 @@ body {
     cursor: pointer; }
   .home-container .queue-item .character {
     font-size: 22px; }
+.home-container .wanikani-icon, .home-container .collapse-text {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 25px; }
+.home-container .wanikani-icon {
+  overflow: hidden;
+  width: 25px;
+  height: 25px;
+  margin-right: 12px;
+  background-color: #f0a; }
+  .home-container .wanikani-icon img {
+    width: 100%; }
 
 .chart svg {
   fill: none;
