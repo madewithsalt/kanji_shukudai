@@ -493,9 +493,12 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
                 wkKey = this.$('input[name="api"]').val(),
                 percent = this.$('input[name="crit-percent"]').val(),
                 $btn = $(evt.currentTarget),
+                $error = this.$('.wk-error'),
                 btnText = $btn.text();
 
             if(_.isEmpty(wkKey)) { return; }
+
+            $error.empty().addClass('hidden');
 
             Cookies.set('wk_key', wkKey);
 
@@ -508,6 +511,12 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
             this.waniKani.fetch({
                 success: function(model) {
+                    $btn.removeAttr('disabled').html(btnText);
+
+                    if(model.get('error')) {
+                        return $error.html(model.get('error').message).removeClass('hidden');
+                    }
+
                     var info = model.get('requested_information'),
                         kanji = _.where(info, { type: 'kanji' });
 
@@ -515,7 +524,9 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
                         self.addCharacter(val.character, val);
                     });
 
-                    $btn.removeAttr('disabled').html(btnText);
+                },
+                error: function() {
+                    $error.html('API Request failed. :(').removeClass('hidden');
                 }
             })
         }
@@ -831,7 +842,7 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
 				},
 				error: function() {
 					if(options.error) {
-						options.error();
+						options.error(arguments);
 					}
 				}
 			})
