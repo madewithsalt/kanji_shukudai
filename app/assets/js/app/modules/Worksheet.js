@@ -5,14 +5,22 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
 
         initialize: function() {
             this.strokeCount = this.collectStrokeCount();
+            this.format = App.data.user_settings.get('template_format') || 'large';
         },
 
         regions: {
-            'strokes': '.stroke-order'
+            'strokes': '.stroke-order',
+            'practice': '.practice-grid'
         },
 
         ui: {
             'strokeOrder': '.stroke-order'
+        },
+
+        serializeData: function() {
+            return _.extend({
+                format: this.format
+            }, this.model.toJSON());
         },
 
         onBeforeShow: function() {

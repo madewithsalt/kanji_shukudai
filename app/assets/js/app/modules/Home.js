@@ -122,7 +122,9 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         processEntries: function() {
             if(!this.itemQueue.length) { return; }
+            var format = this.$('input[name="template-format"]').val();
 
+            App.data.user_settings.set('template-format', format);
             App.data.itemQueue = this.itemQueue;
             App.router.navigate('worksheet', { trigger: true });
         },
