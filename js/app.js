@@ -41,8 +41,7 @@ window.App = (function(Backbone, Marionette) {
 
 
         App.data = {
-            key: new App.Entities.DataKey(),
-            user_settings: new Backbone.Model()
+            key: new App.Entities.DataKey()
         };
 
         // MODALS
@@ -803,7 +802,11 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
                 var formulae = [];
 
                 _.each(results, function(model) {
-                    formulae.push(_.toArray(model.toJSON()));
+                    try {
+                        formulae.push(_.toArray(model.toJSON()));
+                    } catch(e) {
+                        console.error(e);
+                    }
                 });
 
                 callback(null, new Backbone.Collection(_.flatten(formulae)));
