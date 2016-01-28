@@ -41,7 +41,8 @@ window.App = (function(Backbone, Marionette) {
 
 
         App.data = {
-            key: new App.Entities.DataKey()
+            key: new App.Entities.DataKey(),
+            user_settings: new Backbone.Model()
         };
 
         // MODALS
@@ -479,7 +480,9 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         processEntries: function() {
             if(!this.itemQueue.length) { return; }
+            var format = this.$('input[name="template-format"]').val();
 
+            App.data.user_settings.set('template-format', format);
             App.data.itemQueue = this.itemQueue;
             App.router.navigate('worksheet', { trigger: true });
         },
@@ -623,14 +626,22 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
 
         initialize: function() {
             this.strokeCount = this.collectStrokeCount();
+            this.format = App.data.user_settings.get('template_format') || 'large';
         },
 
         regions: {
-            'strokes': '.stroke-order'
+            'strokes': '.stroke-order',
+            'practice': '.practice-grid'
         },
 
         ui: {
             'strokeOrder': '.stroke-order'
+        },
+
+        serializeData: function() {
+            return _.extend({
+                format: this.format
+            }, this.model.toJSON());
         },
 
         onBeforeShow: function() {
