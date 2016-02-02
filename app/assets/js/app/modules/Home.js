@@ -45,7 +45,8 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             var cookies = Cookies.get();
 
             return {
-                wk_key: cookies['wk_key']
+                wk_key: cookies['wk_key'],
+                format: App.data.user_settings.get('template_format') || 'large'
             }
         },
 
@@ -122,10 +123,11 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
 
         processEntries: function() {
             if(!this.itemQueue.length) { return; }
-            var format = this.$('input[name="template-format"]').val();
+            var format = this.$('input[name="template-format"]:checked').val();
 
-            // App.data.user_settings.set('template-format', format);
+            App.data.user_settings.save({ 'template_format': format });
             App.data.itemQueue = this.itemQueue;
+
             App.router.navigate('worksheet', { trigger: true });
         },
 

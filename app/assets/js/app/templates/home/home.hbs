@@ -15,67 +15,80 @@
                         <div class="panel-body">
                             <textarea class="input form-control buffer-bottom" rows="3"></textarea>
                             <p class="small">Characters that do not have a stroke-order are ignored.</p>
+                            <a class="btn btn-default submit">Add</a>
                         </div>
                     </div>
                 </div>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab" id="headingOne">
-                  <h4 class="panel-title">
-                    <span class="wanikani-icon"><img src="img/wanikani.png" /></span>
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                        <span class="collapse-text">WaniKani API</span>
-                    </a>
-                  </h4>
-                </div>
-                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                  <div class="panel-body">
-                    <div class="control-group">
-                        <label class="control-label">API Key:</label>
-                        <input type="text" class="form-control wanikani-api" name="api" value="{{ wk_key }}" />
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="headingOne">
+                      <h4 class="panel-title">
+                        <span class="wanikani-icon"><img src="img/wanikani.png" /></span>
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                            <span class="collapse-text">WaniKani API</span>
+                        </a>
+                      </h4>
                     </div>
-                    <div class="control-group row buffer-top form-horizontal">
-                        <div class="col-md-12">
-                            <label class="control-label">Critical Items Threshold</label>
+                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel">
+                      <div class="panel-body">
+                        <div class="control-group">
+                            <label class="control-label">API Key:</label>
+                            <input type="text" class="form-control wanikani-api" name="api" value="{{ wk_key }}" />
                         </div>
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <input type="number" class="form-control" name="crit-percent" value="95" />                        
-                                <div class="input-group-addon">%</div>
+                        <div class="control-group row buffer-top form-horizontal">
+                            <div class="col-md-12">
+                                <label class="control-label">Critical Items Threshold</label>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="crit-percent" value="95" />                        
+                                    <div class="input-group-addon">%</div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <p class="small">At what percentage did you answer correctly.</p>                        
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <p class="small">At what percentage did you answer correctly.</p>                        
+                        <div class="wk-error alert alert-danger hidden"></div>
+                        <a class="btn btn-sm btn-default get-wanikani">Fetch</a>
+                      </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a href="#collapseThree" data-parent="#accordion" data-toggle="collapse">
+                                Worksheet Template Settings
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                            <div class="template-options">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="template-format" value="large" {{#is format 'large' }}checked{{/is}} />
+                                        Large Format (2 per 'page')
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="template-format" value="condensed" {{#is format 'condensed' }}checked{{/is}} />
+                                        Condensed Format (3-4 per 'page')
+                                    </label>
+                                </div>
+{{!--                                 
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="template-format" value="practice-sheet" />
+                                        Practice Sheet: condensed format with practice grid
+                                    </label>
+                                </div>
+ --}}
+                             </div>
                         </div>
                     </div>
-                    <div class="wk-error alert alert-danger hidden"></div>
-                    <a class="btn btn-sm btn-default get-wanikani">Fetch</a>
-                  </div>
                 </div>
-              </div>
           </div>
-            <a class="btn btn-default submit">Add</a>
-
-{{!--             <div class="template-options buffer">
-                <h3>Formatting Options</h3>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="template-format" value="large" checked />
-                        Large Format (2 per 'page')
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="template-format" value="condensed" />
-                        Condensed Format (4-6 per 'page')
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="template-format" value="practice-sheet" />
-                        Practice Sheet: condensed format with practice grid
-                    </label>
-                </div>
-            </div> --}}
         </form>
     </div>
     <div class="col-md-8">

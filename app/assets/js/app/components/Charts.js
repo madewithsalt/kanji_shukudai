@@ -30,6 +30,24 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
 
 
     Charts.StrokeOrderSVG = Charts.Base.extend({
+        defaults: {
+            drawingSize: 105,
+            columns: 6
+        },
+
+        initialize: function(options) {
+            options = options || {};
+
+            this.options = _.defaults(options, this.defaults);
+
+            var charsPerRow = this.options.columns,
+                strokes = this.options.strokes,
+                drawingSize = this.options.drawingSize;
+
+            this.options.width = charsPerRow <= strokes ? charsPerRow * drawingSize : strokes * drawingSize;
+            this.options.height = strokes > charsPerRow ? (Math.ceil(strokes / charsPerRow) * drawingSize) : drawingSize;
+        },
+
         // http://stackoverflow.com/questions/19484707/how-can-i-make-an-svg-scale-with-its-parent-container
         renderChart: function() {
             var self = this;
@@ -55,6 +73,10 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
                 w = this.options.width,
                 h = this.options.height,
                 strokes = this.options.strokes,
+                // the size the svg strokes are by default
+                drawingDefaultSize = 105,
+                drawingSize = this.options.drawingSize,
+                columns = this.options.columns,
                 attrs = path['$'],
                 pathStroke = attrs.id.split('kvg:' + this.model.get('id') + '-s')[1];
 
@@ -64,20 +86,28 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
                 var $p = this.svg.path(attrs['d']),
                     matrix = new Snap.Matrix();
 
-                var rowLimit = Math.ceil(w / 100),
+                var rowLimit = Math.ceil(w / drawingSize),
                     rows = Math.ceil(strokes / rowLimit),
                     currentRow = Math.ceil(currentStroke / rowLimit),
-                    xTrans = (currentStroke * 100) - 100, 
+                    xTrans = (currentStroke * drawingSize) - drawingSize, 
                     yTrans = 0;
 
                 if(xTrans >= w) {
-                    yTrans = (currentRow * 100) - 100;
-                    xTrans = ((currentStroke - (rowLimit * (currentRow - 1))) * 100) - 100;
-                    // xTrans = ((currentStroke - rowLimit) * 100) - 100;
+                    yTrans = (currentRow * drawingSize) - drawingSize;
+                    xTrans = ((currentStroke - (rowLimit * (currentRow - 1))) * drawingSize) - drawingSize;
                 }
 
-                matrix.translate(xTrans + 5, yTrans + 5);
-                matrix.scale(0.8, 0.8);
+                var offset,
+                    scale = 0.8;
+
+                if(drawingSize != drawingDefaultSize) {
+                    scale = ((drawingSize * 0.8) / drawingDefaultSize);
+                }
+
+                offset = (drawingSize - (drawingSize * 0.8)) / 2;
+                    
+                matrix.translate(xTrans + offset, yTrans + offset);
+                matrix.scale(scale, scale);
 
                 if(pathStroke === currentStroke) {
                     $p.addClass('current');
@@ -136,8 +166,9 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
                 w = this.options.width,
                 h = this.options.height,
                 strokes = this.options.strokes,
+                drawingSize = this.options.drawingSize,
                 currentStroke = this.currentStroke,
-                cols = Math.ceil(w / 100),
+                cols = Math.ceil(w / drawingSize),
                 rows = Math.ceil(strokes / cols);
 
             // top horiz
@@ -150,23 +181,23 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
             this.svg.line(w - 1, 1, w - 1, h - 1).addClass('grid border');
 
             _.times(cols, function(i) {
-                var x = i * 100;
+                var x = i * drawingSize;
                 self.svg.line(x, 0, x, h).addClass('grid border-inner');
             });
 
             _.times(cols * 2, function(i) {
-                var x = i * 50;
+                var x = i * (drawingSize / 2);
                 self.svg.line(x, 0, x, h).addClass('grid border-inner dotted');
             });
 
             _.times(rows * 2, function(i) {
-                var y = i * 50;
+                var y = i * (drawingSize / 2);
                 self.svg.line(0, y, w, y).addClass('grid border-inner dotted');
             });
 
             if(rows > 1) {
                 _.times((rows), function(i) {
-                    var y = i * 100;
+                    var y = i * drawingSize;
                     self.svg.line(0, y, w, y).addClass('grid border-inner');
                 });
             }

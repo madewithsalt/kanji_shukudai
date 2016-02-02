@@ -41,6 +41,15 @@
         font-family: "HiraMinPro-W3", "Hiragino Mincho Pro W3", "Hiragino Mincho Pro", "ヒラギノ明朝 Pro W3", "游明朝", YuMincho, "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", "MS Mincho", serif;
     }
 
+    .condensed {
+        .target {
+            width: 125px;
+            height: 125px;
+            font-size: 90px;
+            line-height: 125px;            
+        }
+    }
+
     .kanji-info {
         .well {
             display: inline-block;

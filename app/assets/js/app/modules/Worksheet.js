@@ -3,6 +3,18 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
     Worksheet.TemplateView = Marionette.LayoutView.extend({
         template: 'worksheet/template',
 
+        sizeSettings: {
+            'large': {
+                columns: 6,
+                drawingSize: 105
+            },
+
+            'condensed': {
+                columns: 10,
+                drawingSize: 65
+            }
+        },
+
         initialize: function() {
             this.strokeCount = this.collectStrokeCount();
             this.format = App.data.user_settings.get('template_format') || 'large';
@@ -24,14 +36,10 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
         },
 
         onBeforeShow: function() {
-            var charsPerRow = 6;
-
-            this.strokes.show(new App.Views.Charts.StrokeOrderSVG({
+            this.strokes.show(new App.Views.Charts.StrokeOrderSVG(_.extend({
                 model: this.model,
-                strokes: this.strokeCount,
-                width: charsPerRow <= this.strokeCount ? charsPerRow * 100 : this.strokeCount * 100,
-                height: this.strokeCount > charsPerRow ? (Math.ceil(this.strokeCount / charsPerRow) * 100) : 100
-            }));
+                strokes: this.strokeCount
+            }, this.sizeSettings[this.format])));
         },
 
         collectStrokeCount: function() {
