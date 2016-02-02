@@ -41,7 +41,8 @@ window.App = (function(Backbone, Marionette) {
 
 
         App.data = {
-            key: new App.Entities.DataKey()
+            key: new App.Entities.DataKey(),
+            user_settings: new App.Entities.UserSettings()
         };
 
         // MODALS
@@ -67,29 +68,40 @@ window.App = (function(Backbone, Marionette) {
 
         App.mainRegion.show(new App.Views.Loader());
 
-        App.data.key.fetch({
-            success: function() {
+        async.parallel([
+                function(callback) {
+                    App.data.key.fetch({
+                        success: function() {
+                            callback();
+                        },
+
+                        error: function(err) {
+                            callback(err);
+                        }
+                    });
+                },
+
+                function(callback) {
+                    App.data.user_settings.fetch({
+                        success: function() {
+                            callback();
+                        },
+                        error: function(err) {
+                            callback(err);
+                        }
+                    });
+                }
+            ], function(err, results) {
+                if (err) {
+                    App.errorsRegion.show(new App.Views.Error({
+                        message: err
+                    }));
+                }
+
+                App.errorsRegion.reset();
+
                 Backbone.history.start();
-            },
-
-            error: function(err) {
-                App.errorsRegion.show(new App.Views.Error({
-                    message: err
-                }));
-            }
-        })
-
-        // async.parallel(tasks, function(err, results) {
-        //     if (err) {
-        //         App.errorsRegion.show(new App.Views.Error({
-        //             message: err
-        //         }));
-        //     }
-
-            // App.errorsRegion.reset();
-
-            // Backbone.history.start();
-        // });
+        });
     });
 
     return App;

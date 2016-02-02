@@ -41,7 +41,8 @@ window.App = (function(Backbone, Marionette) {
 
 
         App.data = {
-            key: new App.Entities.DataKey()
+            key: new App.Entities.DataKey(),
+            user_settings: new App.Entities.UserSettings()
         };
 
         // MODALS
@@ -67,29 +68,40 @@ window.App = (function(Backbone, Marionette) {
 
         App.mainRegion.show(new App.Views.Loader());
 
-        App.data.key.fetch({
-            success: function() {
+        async.parallel([
+                function(callback) {
+                    App.data.key.fetch({
+                        success: function() {
+                            callback();
+                        },
+
+                        error: function(err) {
+                            callback(err);
+                        }
+                    });
+                },
+
+                function(callback) {
+                    App.data.user_settings.fetch({
+                        success: function() {
+                            callback();
+                        },
+                        error: function(err) {
+                            callback(err);
+                        }
+                    });
+                }
+            ], function(err, results) {
+                if (err) {
+                    App.errorsRegion.show(new App.Views.Error({
+                        message: err
+                    }));
+                }
+
+                App.errorsRegion.reset();
+
                 Backbone.history.start();
-            },
-
-            error: function(err) {
-                App.errorsRegion.show(new App.Views.Error({
-                    message: err
-                }));
-            }
-        })
-
-        // async.parallel(tasks, function(err, results) {
-        //     if (err) {
-        //         App.errorsRegion.show(new App.Views.Error({
-        //             message: err
-        //         }));
-        //     }
-
-            // App.errorsRegion.reset();
-
-            // Backbone.history.start();
-        // });
+        });
     });
 
     return App;
@@ -481,7 +493,7 @@ App.module("Home", function(Home, App, Backbone, Marionette, $, _) {
             if(!this.itemQueue.length) { return; }
             var format = this.$('input[name="template-format"]').val();
 
-            App.data.user_settings.set('template-format', format);
+            // App.data.user_settings.set('template-format', format);
             App.data.itemQueue = this.itemQueue;
             App.router.navigate('worksheet', { trigger: true });
         },
@@ -833,6 +845,17 @@ App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
             return attrs;
         }
     })
+
+});
+App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){
+
+    Entities.UserSettings = Backbone.Model.extend({
+        localStorage: new Backbone.LocalStorage('UserSettings'),
+        
+        defaults: {
+            template_format: 'large'
+        }
+    });
 
 });
 App.module("Entities", function(Entities, App, Backbone, Marionette, $, _){

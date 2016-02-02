@@ -43,6 +43,7 @@ module.exports = function(grunt) {
                     '<%= config.lib %>/bootstrap-sass/assets/javascripts/bootstrap.js',
                     '<%= config.lib %>/underscore/underscore.js',
                     '<%= config.lib %>/backbone/backbone.js',
+                    '<%= config.lib %>/backbone.localStorage/backbone.localStorage.js',
                     '<%= config.lib %>/handlebars/handlebars.runtime.js',
                     '<%= config.lib %>/swag/lib/swag.js',
                     '<%= config.lib %>/backbone.wreqr/lib/backbone.wreqr.js',
