@@ -1,0 +1,17 @@
+<h2>About this Project</h2>
+<p class="small">Created by <a href="http://kristi.centinaro.net" target="_blank">Kristi Centinaro</a></p>
+
+<h2>Credits</h2>
+<p>This project would not be possible without the amazing work of the <a href="http://kanjivg.tagaini.net/" target="_blank">KanjiVG</a> team, who have meticulously recorded over 2500 kanji stroke orders in an interpretable way.</p>
+<p>Also a thank you to <a href="http://wanikani.com" target="_blank">WaniKani</a>, who helped me to learn Kanji faster than I could imagine that I could, and for the foresight to provide an API for their users to hook in to.</p>
+<p>Stroke diagrams are created as an SVG, with assistance from the <a href="http://snapsvg.io" target="_blank">Snap.svg</a> JavaScript Library. This is only the simplest of examples of what is possible with this library!</p>
+<p>The website styles are created using <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>, a CSS framework library created by Twitter.</p>
+
+<h3>Technical Bits</h3>
+
+<h4>How it works:</h4>
+<ul>
+	<li>The data from KanjiVG was pre-processed using Node, converting the XML 'formulae' they provide into several smaller JSON files.</li>
+	<li>Alongside these files, a "key" JSON file was created, so that the app can quickly tell which file held what kanji data. This allowed me to efficiently fetch many characters at once by "rolling up" requests in a single file to one call, and asyncronously fetching many characters from several files.</li>
+	<li>The data is then loaded into a "chart" view renderer, which processes the SVG "formula", and renders each stroke order using the specified dimensions.</li>
+</ul>
