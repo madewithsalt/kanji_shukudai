@@ -306,8 +306,16 @@ App.module('Views.Charts', function (Charts, App, Backbone, Marionette, $, _) {
 
                     // render a circle at the start of the stroke 
                     // using pathSegList (soon depricated)
-                    var startCoords = $p.node.pathSegList['0'];
-                    this.svg.circle(startCoords.x, startCoords.y, 5).addClass('marker').transform(matrix);
+                    var startCoords = [];
+
+                    try {
+                        startCoords = $p.node.getPathData()['0'].values;
+
+                    } catch(e) {
+                        console.error('getPathData failed.');
+                    }
+
+                    this.svg.circle(startCoords[0], startCoords[1], 5).addClass('marker').transform(matrix);
                 }
 
                 $p.transform(matrix);
