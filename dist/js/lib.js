@@ -1,5 +1,5 @@
 /*!
- * jQuery JavaScript Library v2.2.1
+ * jQuery JavaScript Library v2.2.3
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -9,7 +9,7 @@
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2016-02-22T19:11Z
+ * Date: 2016-04-05T19:26Z
  */
 
 (function( global, factory ) {
@@ -65,7 +65,7 @@ var support = {};
 
 
 var
-	version = "2.2.1",
+	version = "2.2.3",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -276,6 +276,7 @@ jQuery.extend( {
 	},
 
 	isPlainObject: function( obj ) {
+		var key;
 
 		// Not plain objects:
 		// - Any object or value whose internal [[Class]] property is not "[object Object]"
@@ -285,14 +286,18 @@ jQuery.extend( {
 			return false;
 		}
 
+		// Not own constructor property must be Object
 		if ( obj.constructor &&
-				!hasOwn.call( obj.constructor.prototype, "isPrototypeOf" ) ) {
+				!hasOwn.call( obj, "constructor" ) &&
+				!hasOwn.call( obj.constructor.prototype || {}, "isPrototypeOf" ) ) {
 			return false;
 		}
 
-		// If the function hasn't returned already, we're confident that
-		// |obj| is a plain object, created by {} or constructed with new Object
-		return true;
+		// Own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own
+		for ( key in obj ) {}
+
+		return key === undefined || hasOwn.call( obj, key );
 	},
 
 	isEmptyObject: function( obj ) {
@@ -7325,6 +7330,12 @@ jQuery.extend( {
 	}
 } );
 
+// Support: IE <=11 only
+// Accessing the selectedIndex property
+// forces the browser to respect setting selected
+// on the option
+// The getter ensures a default option is selected
+// when in an optgroup
 if ( !support.optSelected ) {
 	jQuery.propHooks.selected = {
 		get: function( elem ) {
@@ -7333,6 +7344,16 @@ if ( !support.optSelected ) {
 				parent.parentNode.selectedIndex;
 			}
 			return null;
+		},
+		set: function( elem ) {
+			var parent = elem.parentNode;
+			if ( parent ) {
+				parent.selectedIndex;
+
+				if ( parent.parentNode ) {
+					parent.parentNode.selectedIndex;
+				}
+			}
 		}
 	};
 }
@@ -7527,7 +7548,8 @@ jQuery.fn.extend( {
 
 
 
-var rreturn = /\r/g;
+var rreturn = /\r/g,
+	rspaces = /[\x20\t\r\n\f]+/g;
 
 jQuery.fn.extend( {
 	val: function( value ) {
@@ -7603,9 +7625,15 @@ jQuery.extend( {
 		option: {
 			get: function( elem ) {
 
-				// Support: IE<11
-				// option.value not trimmed (#14858)
-				return jQuery.trim( elem.value );
+				var val = jQuery.find.attr( elem, "value" );
+				return val != null ?
+					val :
+
+					// Support: IE10-11+
+					// option.text throws exceptions (#14686, #14858)
+					// Strip and collapse whitespace
+					// https://html.spec.whatwg.org/#strip-and-collapse-whitespace
+					jQuery.trim( jQuery.text( elem ) ).replace( rspaces, " " );
 			}
 		},
 		select: {
@@ -7658,7 +7686,7 @@ jQuery.extend( {
 				while ( i-- ) {
 					option = options[ i ];
 					if ( option.selected =
-							jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
+						jQuery.inArray( jQuery.valHooks.option.get( option ), values ) > -1
 					) {
 						optionSet = true;
 					}
@@ -9353,18 +9381,6 @@ jQuery.ajaxPrefilter( "json jsonp", function( s, originalSettings, jqXHR ) {
 
 
 
-// Support: Safari 8+
-// In Safari 8 documents created via document.implementation.createHTMLDocument
-// collapse sibling forms: the second one becomes a child of the first one.
-// Because of that, this security measure has to be disabled in Safari 8.
-// https://bugs.webkit.org/show_bug.cgi?id=137337
-support.createHTMLDocument = ( function() {
-	var body = document.implementation.createHTMLDocument( "" ).body;
-	body.innerHTML = "<form></form><form></form>";
-	return body.childNodes.length === 2;
-} )();
-
-
 // Argument "data" should be string of html
 // context (optional): If specified, the fragment will be created in this context,
 // defaults to document
@@ -9377,12 +9393,7 @@ jQuery.parseHTML = function( data, context, keepScripts ) {
 		keepScripts = context;
 		context = false;
 	}
-
-	// Stop scripts or inline event handlers from being executed immediately
-	// by using document.implementation
-	context = context || ( support.createHTMLDocument ?
-		document.implementation.createHTMLDocument( "" ) :
-		document );
+	context = context || document;
 
 	var parsed = rsingleTag.exec( data ),
 		scripts = !keepScripts && [];
@@ -9464,7 +9475,7 @@ jQuery.fn.load = function( url, params, callback ) {
 		// If it fails, this function gets "jqXHR", "status", "error"
 		} ).always( callback && function( jqXHR, status ) {
 			self.each( function() {
-				callback.apply( self, response || [ jqXHR.responseText, status, jqXHR ] );
+				callback.apply( this, response || [ jqXHR.responseText, status, jqXHR ] );
 			} );
 		} );
 	}
@@ -9832,7 +9843,7 @@ return jQuery;
 
 !function() {
   var d3 = {
-    version: "3.5.16"
+    version: "3.5.17"
   };
   var d3_arraySlice = [].slice, d3_array = function(list) {
     return d3_arraySlice.call(list);
@@ -13357,7 +13368,7 @@ return jQuery;
         λ0 = λ, sinφ0 = sinφ, cosφ0 = cosφ, point0 = point;
       }
     }
-    return (polarAngle < -ε || polarAngle < ε && d3_geo_areaRingSum < 0) ^ winding & 1;
+    return (polarAngle < -ε || polarAngle < ε && d3_geo_areaRingSum < -ε) ^ winding & 1;
   }
   function d3_geo_clipCircle(radius) {
     var cr = Math.cos(radius), smallRadius = cr > 0, notHemisphere = abs(cr) > ε, interpolate = d3_geo_circleInterpolate(radius, 6 * d3_radians);
@@ -28779,22 +28790,22 @@ return Snap;
 }));
 
 /*!
- * JavaScript Cookie v2.1.0
+ * JavaScript Cookie v2.1.1
  * https://github.com/js-cookie/js-cookie
  *
  * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
  * Released under the MIT license
  */
-(function (factory) {
+;(function (factory) {
 	if (typeof define === 'function' && define.amd) {
 		define(factory);
 	} else if (typeof exports === 'object') {
 		module.exports = factory();
 	} else {
-		var _OldCookies = window.Cookies;
+		var OldCookies = window.Cookies;
 		var api = window.Cookies = factory();
 		api.noConflict = function () {
-			window.Cookies = _OldCookies;
+			window.Cookies = OldCookies;
 			return api;
 		};
 	}
@@ -28814,6 +28825,9 @@ return Snap;
 	function init (converter) {
 		function api (key, value, attributes) {
 			var result;
+			if (typeof document === 'undefined') {
+				return;
+			}
 
 			// Write
 
@@ -28902,7 +28916,10 @@ return Snap;
 			return result;
 		}
 
-		api.get = api.set = api;
+		api.set = api;
+		api.get = function (key) {
+			return api(key);
+		};
 		api.getJSON = function () {
 			return api.apply({
 				json: true
@@ -37112,9 +37129,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 // Backbone.Wreqr (Backbone.Marionette)
 // ----------------------------------
-// v1.3.5
+// v1.3.6
 //
-// Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
+// Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
 // Distributed under MIT license
 //
 // http://github.com/marionettejs/backbone.wreqr
@@ -37141,7 +37158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   var Wreqr = Backbone.Wreqr = {};
 
-  Backbone.Wreqr.VERSION = '1.3.5';
+  Backbone.Wreqr.VERSION = '1.3.6';
 
   Backbone.Wreqr.noConflict = function () {
     Backbone.Wreqr = previousWreqr;
@@ -37548,9 +37565,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 // MarionetteJS (Backbone.Marionette)
 // ----------------------------------
-// v2.4.4
+// v2.4.5
 //
-// Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
+// Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
 // Distributed under MIT license
 //
 // http://marionettejs.com
@@ -37586,9 +37603,9 @@ return /******/ (function(modules) { // webpackBootstrap
   /* istanbul ignore next */
   // Backbone.BabySitter
   // -------------------
-  // v0.1.10
+  // v0.1.11
   //
-  // Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
+  // Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
   // Distributed under MIT license
   //
   // http://github.com/marionettejs/backbone.babysitter
@@ -37715,7 +37732,7 @@ return /******/ (function(modules) { // webpackBootstrap
       // return the public API
       return Container;
     }(Backbone, _);
-    Backbone.ChildViewContainer.VERSION = "0.1.10";
+    Backbone.ChildViewContainer.VERSION = "0.1.11";
     Backbone.ChildViewContainer.noConflict = function() {
       Backbone.ChildViewContainer = previousChildViewContainer;
       return this;
@@ -37726,9 +37743,9 @@ return /******/ (function(modules) { // webpackBootstrap
   /* istanbul ignore next */
   // Backbone.Wreqr (Backbone.Marionette)
   // ----------------------------------
-  // v1.3.5
+  // v1.3.6
   //
-  // Copyright (c)2015 Derick Bailey, Muted Solutions, LLC.
+  // Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
   // Distributed under MIT license
   //
   // http://github.com/marionettejs/backbone.wreqr
@@ -37736,7 +37753,7 @@ return /******/ (function(modules) { // webpackBootstrap
     "use strict";
     var previousWreqr = Backbone.Wreqr;
     var Wreqr = Backbone.Wreqr = {};
-    Backbone.Wreqr.VERSION = "1.3.5";
+    Backbone.Wreqr.VERSION = "1.3.6";
     Backbone.Wreqr.noConflict = function() {
       Backbone.Wreqr = previousWreqr;
       return this;
@@ -38037,7 +38054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
   var Marionette = Backbone.Marionette = {};
 
-  Marionette.VERSION = '2.4.4';
+  Marionette.VERSION = '2.4.5';
 
   Marionette.noConflict = function() {
     root.Marionette = previousMarionette;
@@ -38125,7 +38142,7 @@ return /******/ (function(modules) { // webpackBootstrap
   // utility method for parsing @ui. syntax strings
   // into associated selector
   Marionette.normalizeUIString = function(uiString, ui) {
-    return uiString.replace(/@ui\.[a-zA-Z_$0-9]*/g, function(r) {
+    return uiString.replace(/@ui\.[a-zA-Z-_$0-9]*/g, function(r) {
       return ui[r.slice(4)];
     });
   };
@@ -38197,7 +38214,11 @@ return /******/ (function(modules) { // webpackBootstrap
     }
   };
   
-  deprecate._warn = typeof console !== 'undefined' && (console.warn || console.log) || function() {};
+  deprecate._console = typeof console !== 'undefined' ? console : {};
+  deprecate._warn = function() {
+    var warn = deprecate._console.warn || deprecate._console.log || function() {};
+    return warn.apply(deprecate._console, arguments);
+  };
   deprecate._cache = {};
   
   /* jshint maxstatements: 14, maxcomplexity: 7 */
@@ -38662,7 +38683,7 @@ return /******/ (function(modules) { // webpackBootstrap
         this.triggerMethod('before:swapOut', this.currentView, this, options);
       }
   
-      if (this.currentView) {
+      if (this.currentView && isDifferentView) {
         delete this.currentView._parent;
       }
   
@@ -40881,7 +40902,7 @@ return /******/ (function(modules) { // webpackBootstrap
   
             var eventKey  = eventName + selector;
             var handler   = _.isFunction(behaviour) ? behaviour : b[behaviour];
-  
+            if (!handler) { return; }
             _events[eventKey] = _.bind(handler, b);
           }, this);
   
