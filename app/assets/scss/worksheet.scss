@@ -50,6 +50,18 @@
         }
     }
 
+    .two-col {
+        width: 50%;
+        float: left;
+
+        .target {
+            width: 100px;
+            height: 100px;
+            font-size: 70px;
+            line-height: 100px;            
+        }
+    }
+
     .kanji-info {
         .well {
             display: inline-block;

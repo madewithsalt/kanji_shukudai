@@ -3,6 +3,11 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
     Worksheet.TemplateView = Marionette.LayoutView.extend({
         template: 'worksheet/template',
 
+        className: function() {
+            var format = App.data.user_settings.get('template_format') || 'large';
+            return 'formula-list-item ' + format;
+        },
+
         sizeSettings: {
             'large': {
                 columns: 6,
@@ -12,6 +17,11 @@ App.module("Worksheet", function(Worksheet, App, Backbone, Marionette, $, _) {
             'condensed': {
                 columns: 10,
                 drawingSize: 65
+            },
+
+            'two-col': {
+                columns: 4,
+                drawingSize: 50
             }
         },
 

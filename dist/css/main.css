@@ -7906,6 +7906,14 @@ body {
   height: 125px;
   font-size: 90px;
   line-height: 125px; }
+.formula-list .two-col {
+  width: 50%;
+  float: left; }
+  .formula-list .two-col .target {
+    width: 100px;
+    height: 100px;
+    font-size: 70px;
+    line-height: 100px; }
 .formula-list .kanji-info .well {
   display: inline-block;
   margin-right: 8px; }
